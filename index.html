@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raj Fitness Gym - Transform Your Life</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Raj Fitness Gym - Best gym in your locality with modern equipment, expert trainers, and flexible membership plans.">
+    <meta name="keywords" content="gym, fitness, workout, health, membership, personal trainer">
+    <meta name="author" content="Raj Fitness Gym">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Raj Fitness Gym - Transform Your Life">
+    <meta property="og:description" content="Join the best gym in your locality with state-of-the-art equipment and certified trainers.">
+    <meta property="og:image" content="images/gym.jpg">
+    <meta property="og:url" content="https://yourwebsite.com">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF8C00">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="images/logo-192.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@1,300&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <!-- QR generator library (used by smartEntry.js to generate scannable QR codes) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Firebase (for authentication) -->
+    <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+
+    
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- NAVIGATION                                  -->
+    <!-- ============================================ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Left: Logo -->
+            <div class="nav-left">
+                <a href="#home" class="logo-link">
+                    <img src="images/logo.jpeg" alt="Raj Gym Logo" class="logo">
+                    <span class="brand-name">Raj Gym</span>
+                </a>
+            </div>
+
+            <!-- Center: Navigation Links -->
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#plans" class="nav-link">Plans</a></li>
+                <li><a href="#workout" class="nav-link">Workout</a></li>
+                <li><a href="#bmi" class="nav-link">BMI</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="btn-primary" onclick="openMembershipModal()">
+                    <i class="fas fa-dumbbell"></i> Join Now
+                </button>
+                <button class="btn-secondary" onclick="callUs()">
+                    <i class="fas fa-phone"></i> Call Us
+                </button>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            
+                <!-- Right: Buttons -->
+                <div class="nav-right">
+                <!-- User Profile / Login Button - MOVED AFTER TOGGLE ICON -->
+                <div id="userSection">
+                    <button class="btn-profile" onclick="openAuthModal()" id="profileBtn">
+                        <i class="fas fa-user-circle"></i> My Profile
+                    </button>
+                </div>
+
+                <!-- Logged In User -->
+                <div id="userLoggedIn" style="display:none;" class="user-profile">
+                    <div class="user-avatar" onclick="toggleUserMenu()">
+                        <img id="userProfileImage" src="images/default-avatar.png" alt="Profile" class="profile-img">
+                        <span id="userNameDisplay">User</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <img id="dropdownProfileImage" src="images/default-avatar.png" alt="Profile" class="dropdown-img">
+                            <div>
+                                <h4 id="dropdownUserName">User</h4>
+                                <small id="dropdownUserEmail">user@email.com</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="openProfileModal()"><i class="fas fa-user"></i> My Profile</a>
+                        <a href="#dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
+                        <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="logoutUser()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================ -->
+    <!-- AUTH MODAL (Login/Signup with Toggle)        -->
+    <!-- ============================================ -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="auth-close" onclick="closeAuthModal()">&times;</span>
+            
+            <!-- Logo -->
+            <div class="auth-logo">
+                <img src="images/logo.jpeg" alt="Raj Gym">
+                <h2>Raj Fitness Gym</h2>
+            </div>
+
+            <!-- Toggle Switch with Icons -->
+            <div class="auth-toggle-container">
+                <div class="auth-toggle">
+                    <span class="toggle-label active" id="toggleLoginLabel">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="authToggle" onchange="toggleAuthMode()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" id="toggleSignupLabel">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </span>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <div class="auth-header">
+                    <h2>Welcome Back! 👋</h2>
+                    <p>Login to your account</p>
+                </div>
+                
+                <div class="auth-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="auth-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-pwd" onclick="togglePassword('loginPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe"> Remember Me
+                    </label>
+                    <a href="#" onclick="showNotification('🔑 Password reset link sent to your email!')">Forgot Password?</a>
+                </div>
+                
+                <button onclick="loginUser()" class="auth-submit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <p class="auth-switch">Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign Up</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <div class="auth-header">
+                    <h2>Create Account 🚀</h2>
+                    <p>Join Raj Fitness Gym today!</p>
+                </div>
+                
+                <div class="auth-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="auth-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="auth-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="signupPhone" placeholder="Enter your phone number">
+                </div>
+                
+                <div class="auth-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                        <button type="button" class="toggle-pwd" onclick="togglePassword('signupPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar" id="strengthBar"></div>
+                        <span class="strength-text" id="strengthText">Weak</span>
+                    </div>
+                </div>
+                
+                <div class="auth-group">
+                    <label><i class="fas fa-lock"></i> Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="signupConfirm" placeholder="Confirm your password" required>
+                        <button type="button" class="toggle-pwd" onclick="togglePassword('signupConfirm', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="auth-terms">
+                    <input type="checkbox" id="authTerms">
+                    <label for="authTerms">I agree to the <a href="#" onclick="showTerms()">Terms & Conditions</a></label>
+                </div>
+                
+                <button onclick="signupUser()" class="auth-submit">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                
+                <p class="auth-switch">Already have an account? <a href="#" onclick="toggleAuthMode()">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- PROFILE MODAL (With Image Upload)            -->
+    <!-- ============================================ -->
+    <div id="profileModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <span class="profile-close" onclick="closeProfileModal()">&times;</span>
+            
+            <div class="profile-header">
+                <h2><i class="fas fa-user-circle"></i> My Profile</h2>
+                <p>Update your profile information</p>
+            </div>
+            
+            <!-- Profile Image Upload -->
+            <div class="profile-image-section">
+                <div class="profile-image-wrapper">
+                    <img id="profilePreview" src="images/default-avatar.png" alt="Profile Photo">
+                    <label for="profileImageUpload" class="profile-upload-btn">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="profileImageUpload" accept="image/*" onchange="uploadProfileImage(event)">
+                </div>
+                <p class="profile-image-text">Click camera icon to upload photo</p>
+            </div>
+            
+            <!-- Profile Details -->
+            <div class="profile-details">
+                <div class="profile-field">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="profileName" placeholder="Enter your full name">
+                </div>
+                
+                <div class="profile-field">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="profileEmail" placeholder="Enter your email" readonly>
+                </div>
+                
+                <div class="profile-field">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="profilePhone" placeholder="Enter your phone number">
+                </div>
+                
+                <div class="profile-field">
+                    <label><i class="fas fa-calendar-alt"></i> Member Since</label>
+                    <input type="text" id="profileJoined" readonly>
+                </div>
+            </div>
+            
+            <button onclick="updateProfile()" class="profile-save-btn">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT                                -->
+    <!-- ============================================ -->
+    <main>
+
+        <!-- ===== HERO SECTION ===== -->
+        <section id="home" class="hero">
+            <div class="hero-overlay">
+                <div class="hero-content">
+                    <h1 class="hero-title" aria-label="Transform Your Body, Transform Your Life">
+                        <span class="reveal-line" style="--i:0;">Transform Your Body,</span>
+                        <span class="reveal-line reveal-line-accent" style="--i:1;">Transform Your Life</span>
+                    </h1>
+                    <p class="hero-subtitle" aria-label="Join the best gym in your locality with state-of-the-art equipment, certified trainers, and a supportive community.">
+                        <span class="reveal-word" style="--i:0;">Join</span>
+                        <span class="reveal-word" style="--i:1;">the</span>
+                        <span class="reveal-word" style="--i:2;">best</span>
+                        <span class="reveal-word" style="--i:3;">gym</span>
+                        <span class="reveal-word" style="--i:4;">in</span>
+                        <span class="reveal-word" style="--i:5;">your</span>
+                        <span class="reveal-word" style="--i:6;">locality</span>
+                        <span class="reveal-word" style="--i:7;">with</span>
+                        <span class="reveal-word" style="--i:8;">state-of-the-art</span>
+                        <span class="reveal-word" style="--i:9;">equipment,</span>
+                        <span class="reveal-word" style="--i:10;">certified</span>
+                        <span class="reveal-word" style="--i:11;">trainers,</span>
+                        <span class="reveal-word" style="--i:12;">and</span>
+                        <span class="reveal-word" style="--i:13;">a</span>
+                        <span class="reveal-word" style="--i:14;">supportive</span>
+                        <span class="reveal-word" style="--i:15;">community.</span>
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary btn-large" onclick="openMembershipModal()">
+                            <i class="fas fa-dumbbell"></i> Start Your Journey
+                        </button>
+                        <button class="btn-secondary btn-large" onclick="scrollToSection('plans')">
+                            <i class="fas fa-tags"></i> View Plans
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== DAILY QUOTE ===== -->
+        <div class="daily-quote">
+            <i class="fas fa-quote-left" style="color:var(--primary);font-size:2rem;"></i>
+            <p id="dailyQuote">Loading inspirational quote...</p>
+            <span id="quoteAuthor">- Fitness Guru</span>
+            <button onclick="refreshQuote()" class="btn-secondary" style="margin-top:10px;padding:5px 15px;font-size:0.8rem;">
+                <i class="fas fa-sync"></i> New Quote
+            </button>
+        </div>
+
+        <!-- ===== ABOUT SECTION ===== -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <h2 class="section-title">About Us</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Raj Fitness Gym has been transforming lives since 2015. We provide a world-class fitness experience with state-of-the-art equipment, certified trainers, and a motivating environment.</p>
+                        <div class="stats">
+                            <div class="stat">
+                                <h4>500+</h4>
+                                <p>Happy Members</p>
+                            </div>
+                            <div class="stat">
+                                <h4>10+</h4>
+                                <p>Expert Trainers</p>
+                            </div>
+                            <div class="stat">
+                                <h4>5</h4>
+                                <p>Awards Won</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MEMBERSHIP PLANS ===== -->
+        <section id="plans" class="plans-section">
+            <div class="container">
+                <h2 class="section-title">Choose Your Plan</h2>
+                <p class="section-subtitle">Flexible membership options to suit your fitness goals</p>
+                
+                <div class="plans-grid">
+                    <div class="plan-card" data-plan="basic">
+                        <div class="plan-header">
+                            <h3>Basic</h3>
+                            <div class="plan-price">₹999 <span>/month</span></div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> Access to gym equipment</li>
+                            <li><i class="fas fa-check"></i> Locker room access</li>
+                            <li><i class="fas fa-check"></i> 5 AM - 11 PM access</li>
+                            <li><i class="fas fa-times"></i> Personal trainer</li>
+                            <li><i class="fas fa-times"></i> Diet plan</li>
+                        </ul>
+                        <button class="btn-primary" onclick="selectPlan('Basic')">Get Started</button>
+                    </div>
+
+                    <div class="plan-card popular" data-plan="premium">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="plan-header">
+                            <h3>Premium</h3>
+                            <div class="plan-price">₹1999 <span>/month</span></div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> All Basic features</li>
+                            <li><i class="fas fa-check"></i> Personal trainer (4 sessions/month)</li>
+                            <li><i class="fas fa-check"></i> Diet plan consultation</li>
+                            <li><i class="fas fa-check"></i> Yoga classes</li>
+                            <li><i class="fas fa-times"></i> Premium locker</li>
+                        </ul>
+                        <button class="btn-primary" onclick="selectPlan('Premium')">Get Started</button>
+                    </div>
+
+                    <div class="plan-card" data-plan="gold">
+                        <div class="plan-header">
+                            <h3>Gold</h3>
+                            <div class="plan-price">₹2999 <span>/month</span></div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> All Premium features</li>
+                            <li><i class="fas fa-check"></i> Unlimited personal training</li>
+                            <li><i class="fas fa-check"></i> Custom diet plan</li>
+                            <li><i class="fas fa-check"></i> Premium locker</li>
+                            <li><i class="fas fa-check"></i> Guest passes (2/month)</li>
+                        </ul>
+                        <button class="btn-primary" onclick="selectPlan('Gold')">Get Started</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PROGRESS TRACKER ===== -->
+        <section id="progress" class="progress-section">
+
+            <!-- NEW: Dashboard will use saved progress + workout logs for charts -->
+
+            
+            <!-- NEW: Dashboard will use saved progress + workout logs for charts -->
+            <!-- (Dashboard will use saved progress + workout logs for charts) -->
+            <div class="container">
+                <h2 class="section-title">Track Your Progress</h2>
+
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>💪 Strength Training</span>
+                            <span id="progressStrengthText">75%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressStrengthFill" style="width:75%;" data-width="75"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>🏃 Cardio</span>
+                            <span id="progressCardioText">60%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressCardioFill" style="width:60%;" data-width="60"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>🧘 Flexibility</span>
+                            <span id="progressFlexText">45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFlexFill" style="width:45%;" data-width="45"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>🥗 Nutrition</span>
+                            <span id="progressNutritionText">80%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressNutritionFill" style="width:80%;" data-width="80"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-update-panel">
+                    <div class="progress-update-grid">
+                        <div class="progress-set">
+                            <label for="strengthInput">Strength %</label>
+                            <input type="number" id="strengthInput" min="0" max="100" value="75">
+                        </div>
+                        <div class="progress-set">
+                            <label for="cardioInput">Cardio %</label>
+                            <input type="number" id="cardioInput" min="0" max="100" value="60">
+                        </div>
+                        <div class="progress-set">
+                            <label for="flexInput">Flexibility %</label>
+                            <input type="number" id="flexInput" min="0" max="100" value="45">
+                        </div>
+                        <div class="progress-set">
+                            <label for="nutritionInput">Nutrition %</label>
+                            <input type="number" id="nutritionInput" min="0" max="100" value="80">
+                        </div>
+                    </div>
+
+                    <div class="progress-update-actions">
+                        <button class="btn-primary" onclick="saveProgress()">
+                            <i class="fas fa-save"></i> Save / Update
+                        </button>
+                        <button class="btn-secondary" onclick="resetProgress()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+
+                    <p id="progressSavedMsg" class="progress-saved-msg" style="display:none;">
+                        ✅ Progress saved successfully!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== DASHBOARD + GRAPHS (Saved progress + workout logs) ===== -->
+        <section id="dashboard" class="dashboard-section" style="display:none;">
+            <div class="container">
+                <h2 class="section-title">📊 Dashboard</h2>
+                <p class="section-subtitle">Last 7/14 days: progress sliders + workout completion (week/month calendar se data aata hai)</p>
+
+                <div class="dashboard-widgets">
+                    <div class="dashboard-widget">
+                        <h3 class="widget-title">🏋️ Workout Completion (Last 7 days)</h3>
+                        <div class="workout-completion-bars" id="completionBars"></div>
+                        <div class="workout-completion-meta" id="completionMeta">Loading...</div>
+                    </div>
+
+                    <div class="dashboard-widget">
+                        <h3 class="widget-title">💪 Progress Trend (Last 7 days)</h3>
+                        <div class="progress-trend-bars">
+                            <div class="trend-row"><span>Strength</span><div class="mini-bars" id="trendStrength"></div></div>
+                            <div class="trend-row"><span>Cardio</span><div class="mini-bars" id="trendCardio"></div></div>
+                            <div class="trend-row"><span>Flexibility</span><div class="mini-bars" id="trendFlex"></div></div>
+                            <div class="trend-row"><span>Nutrition</span><div class="mini-bars" id="trendNutrition"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== WORKOUT LOG CALENDAR ===== -->
+        <section id="workoutLog" class="workout-log-section">
+            <div class="container">
+                <h2 class="section-title">📅 Workout Log Calendar</h2>
+                <p class="section-subtitle">Aaj workout kiya? Mark karo + notes add karo. Logged-in users ke liye localStorage me saved.</p>
+
+                <div class="workout-log-panel">
+                    <div class="workout-log-controls">
+                        <div class="form-group">
+                            <label for="logView"><i class="fas fa-layer-group"></i> View</label>
+                            <select id="logView" class="diet-select">
+                                <option value="week" selected>Week (Mon–Sun)</option>
+                                <option value="month">Month</option>
+                            </select>
+                        </div>
+                        <div class="workout-log-nav">
+                            <button class="btn-secondary" onclick="shiftWorkoutLog(-1)"><i class="fas fa-chevron-left"></i> Prev</button>
+                            <button class="btn-secondary" onclick="gotoTodayWorkoutLog()"><i class="fas fa-bullseye"></i> Today</button>
+                            <button class="btn-secondary" onclick="shiftWorkoutLog(1)">Next <i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="workout-log-grid-wrap">
+                        <div class="workout-log-weekdays" id="workoutLogWeekdays" style="display:none;"></div>
+                        <div id="workoutLogGrid" class="workout-log-grid"></div>
+                    </div>
+
+                    <div class="workout-log-actions">
+                        <button class="btn-primary" onclick="saveTodayLogQuick()"><i class="fas fa-save"></i> Save Today Done</button>
+                        <button class="btn-secondary" onclick="exportWorkoutLogs()"><i class="fas fa-download"></i> Export JSON</button>
+                    </div>
+                </div>
+
+                <div id="workoutLogMsg" class="progress-saved-msg" style="display:none; text-align:center;">✅ Saved!</div>
+            </div>
+        </section>
+
+        <!-- ===== BADGES & LEADERBOARD ===== -->
+        <section id="badges" class="badges-section">
+            <div class="container">
+                <h2 class="section-title">🏆 Badges & Progress</h2>
+                <p class="section-subtitle">Earn badges by saving workouts, booking trainers & staying consistent</p>
+
+                <div class="badges-grid">
+                    <div class="badge-card">
+                        <h3>🏅 Your Score</h3>
+                        <div class="badge-score" id="badgeScore">0</div>
+                        <small class="badge-sub">Updated automatically</small>
+                    </div>
+
+                    <div class="badge-list" id="badgeList">
+                        <!-- badges render here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== DIET PLANNER ===== -->
+        <section id="diet" class="diet-section">
+            <div class="container">
+                <h2 class="section-title">🥗 Diet Planner</h2>
+                <p class="section-subtitle">Generate a 7-day meal plan + macros suggestions (saved for logged-in users)</p>
+
+                <div class="diet-panel">
+                    <div class="diet-controls">
+                        <div class="form-group">
+                            <label for="dietGoal"><i class="fas fa-bullseye"></i> Goal</label>
+                            <select id="dietGoal" class="diet-select">
+                                <option value="fat-loss">Fat Loss</option>
+                                <option value="muscle-gain" selected>Muscle Gain</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dietType"><i class="fas fa-leaf"></i> Diet Type</label>
+                            <select id="dietType" class="diet-select">
+                                <option value="vegetarian" selected>Vegetarian</option>
+                                <option value="non-veg">Non-Veg</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dietCalories"><i class="fas fa-fire"></i> Calories Level</label>
+                            <select id="dietCalories" class="diet-select">
+                                <option value="low">Low</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+
+                        <button class="btn-primary diet-generate" onclick="generateDietPlan()">
+                            <i class="fas fa-wand-magic-sparkles"></i> Generate 7-Day Plan
+                        </button>
+                    </div>
+
+                    <div id="dietResult" class="diet-result" style="display:none;">
+                        <div class="diet-result-header">
+                            <h3 id="dietTitle">🔥 Your Diet Plan</h3>
+                            <small id="dietMacrosHint"></small>
+                        </div>
+                        <div id="dietPlanGrid" class="diet-plan-grid"></div>
+
+                        <div class="diet-actions-inline">
+                            <button class="btn-secondary" onclick="saveDietPlan()">
+                                <i class="fas fa-save"></i> Save Diet Plan
+                            </button>
+                            <button class="btn-secondary" onclick="clearDietPlan()">
+                                <i class="fas fa-undo"></i> Clear
+                            </button>
+                        </div>
+
+                        <p id="dietSavedMsg" class="progress-saved-msg" style="display:none;">✅ Diet plan saved!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== WEEKLY ROUTINE BUILDER ===== -->
+        <section id="routine" class="routine-section">
+            <div class="container">
+                <h2 class="section-title">📅 Weekly Routine Builder</h2>
+                <p class="section-subtitle">Create Mon–Sun routine, track completion, and save it for logged-in users</p>
+
+                <div class="routine-panel">
+                    <div class="routine-controls">
+                        <div class="form-group">
+                            <label for="routineDays"><i class="fas fa-calendar-days"></i> Days / Week</label>
+                            <select id="routineDays" class="diet-select">
+                                <option value="3">3 Days</option>
+                                <option value="4">4 Days</option>
+                                <option value="5" selected>5 Days</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="routineFocus"><i class="fas fa-dumbbell"></i> Focus</label>
+                            <select id="routineFocus" class="diet-select">
+                                <option value="fullbody" selected>Full Body</option>
+                                <option value="upper">Upper Body</option>
+                                <option value="lower">Lower Body</option>
+                            </select>
+                        </div>
+
+                        <button class="btn-primary diet-generate" onclick="generateWeeklyRoutine()">
+                            <i class="fas fa-route"></i> Generate Routine
+                        </button>
+                    </div>
+
+                    <div id="routineResult" class="routine-result" style="display:none;">
+                        <div class="routine-header">
+                            <h3 id="routineTitle">🔥 Your Weekly Routine</h3>
+                            <small id="routineMeta"></small>
+                        </div>
+
+                        <div id="routineDaysList" class="routine-days-list"></div>
+
+                        <div class="routine-actions-inline">
+                            <button class="btn-secondary" onclick="startRoutineTracking()">
+                                <i class="fas fa-check-double"></i> Start Tracking
+                            </button>
+                            <button class="btn-secondary" onclick="saveRoutineTracking()">
+                                <i class="fas fa-save"></i> Save Status
+                            </button>
+                            <button class="btn-secondary" onclick="resetRoutineTracking()">
+                                <i class="fas fa-undo"></i> Reset Week
+                            </button>
+                        </div>
+
+                        <p id="routineSavedMsg" class="progress-saved-msg" style="display:none;">✅ Routine saved!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MY WORKOUTS ===== -->
+        <section id="myWorkouts" class="my-workouts-section">
+
+            <div class="container">
+                <h2 class="section-title">My Workouts</h2>
+                <p class="section-subtitle">Generate workouts and save them here (for logged-in users)</p>
+
+                <div class="my-workouts-actions">
+                    <button class="btn-secondary" onclick="exportMyWorkouts()">
+                        <i class="fas fa-download"></i> Export JSON
+                    </button>
+                    <button class="btn-secondary" onclick="clearMyWorkouts()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <div id="myWorkoutsList" class="my-workouts-list"></div>
+
+                <div id="myWorkoutsEmpty" class="my-workouts-empty">
+                    <i class="fas fa-dumbbell" style="color:var(--primary);font-size:2rem;"></i>
+                    <h3>No saved workouts yet</h3>
+                    <p>Workout generate karke “Save Workout” button dabao.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TRAINER BOOKING ===== -->
+        <section id="trainer" class="trainer-section">
+            <div class="container">
+                <h2 class="section-title">Trainer Booking</h2>
+                <p class="section-subtitle">Book your preferred trainer slot (stored in your browser)</p>
+
+                <div class="trainer-grid">
+
+                    <div class="trainer-form">
+                        <div class="form-group">
+                            <label for="bookingName"><i class="fas fa-user"></i> Full Name</label>
+                            <input type="text" id="bookingName" placeholder="Enter your name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bookingPhone"><i class="fas fa-phone"></i> Phone</label>
+                            <input type="tel" id="bookingPhone" placeholder="10-digit phone" required pattern="[0-9]{10}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bookingGoal"><i class="fas fa-bullseye"></i> Goal</label>
+                            <select id="bookingGoal" required>
+                                <option value="">Select goal</option>
+                                <option value="fat-loss">Fat Loss</option>
+                                <option value="muscle-gain">Muscle Gain</option>
+                                <option value="strength">Strength</option>
+                                <option value="flexibility">Flexibility</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bookingSlot"><i class="fas fa-clock"></i> Preferred Slot</label>
+                            <select id="bookingSlot" required>
+                                <option value="">Select slot</option>
+
+                                <optgroup label="Morning (6-9 AM)">
+                                    <option value="morning_6_7">6:00 - 7:00 AM</option>
+                                    <option value="morning_7_8">7:00 - 8:00 AM</option>
+                                    <option value="morning_8_9">8:00 - 9:00 AM</option>
+                                </optgroup>
+
+                                <optgroup label="Afternoon (12-3 PM)">
+                                    <option value="afternoon_12_1">12:00 - 1:00 PM</option>
+                                    <option value="afternoon_1_2">1:00 - 2:00 PM</option>
+                                    <option value="afternoon_2_3">2:00 - 3:00 PM</option>
+                                </optgroup>
+
+                                <optgroup label="Evening (5-8 PM)">
+                                    <option value="evening_5_6">5:00 - 6:00 PM</option>
+                                    <option value="evening_6_7">6:00 - 7:00 PM</option>
+                                    <option value="evening_7_8">7:00 - 8:00 PM</option>
+                                </optgroup>
+                            </select>
+                            <small style="display:block;margin-top:8px;color:var(--gray);font-weight:700;">Capacity: 3 trainers per sub-slot</small>
+                        </div>
+
+
+                        <button class="btn-primary" onclick="bookTrainer()">
+                            <i class="fas fa-calendar-check"></i> Book Trainer
+                        </button>
+                        <p id="bookingMsg" class="progress-saved-msg" style="display:none;"></p>
+                    </div>
+
+                <div class="trainer-side">
+                        <h3 class="trainer-side-title">Your Bookings</h3>
+                        <div id="trainerBookingsList" class="trainer-bookings-list"></div>
+                        <div id="trainerBookingsEmpty" class="my-workouts-empty">
+                            <i class="fas fa-user-tie" style="color:var(--primary);font-size:2rem;"></i>
+                            <h3>No bookings yet</h3>
+                            <p>Form fill karke book karo.</p>
+                        </div>
+
+                        <div style="margin-top:14px;">
+                            <small style="color:var(--gray);font-weight:800;display:block;">Note: if a sub-slot is full, system shows “choose another slot”.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ===== QR SMART ENTRY ===== -->
+<section id="smartEntry" class="smart-entry-section">
+    <div class="container">
+        <h2 class="section-title">Smart Entry (QR)</h2>
+        <p class="section-subtitle">Frontdesk QR Scan + Members "Generate My QR"</p>
+
+        <div class="smart-entry-grid">
+            <!-- Frontdesk Card -->
+            <div class="smart-entry-card">
+                <h3 class="smart-entry-title">Frontdesk: Check-in QR Scan</h3>
+                <p class="smart-entry-sub">Camera se QR scan karein (BarcodeDetector supported)</p>
+
+                <div class="smart-entry-actions">
+                    <button class="btn-primary" type="button" onclick="startFrontdeskScan()">
+                        <i class="fas fa-camera"></i> Start Scan
+                    </button>
+                    <button class="btn-secondary" type="button" onclick="stopFrontdeskScan()">
+                        <i class="fas fa-stop"></i> Stop
+                    </button>
+                </div>
+
+                <div class="scan-wrap">
+                    <video id="scanVideo" playsinline muted></video>
+                    <div class="scan-overlay">
+                        <div class="scan-frame"></div>
+                    </div>
+                </div>
+
+                <div id="frontdeskScanMsg" class="smart-entry-msg" style="display:none;"></div>
+
+                <div class="frontdesk-last">
+                    <h4 class="smart-entry-mini-title">Last 20 Check-ins</h4>
+                    <div id="checkinHistoryList" class="history-list"></div>
+                    <div id="checkinHistoryEmpty" class="my-workouts-empty" style="display:none;">
+                        <i class="fas fa-clock" style="color:var(--primary);font-size:2rem;"></i>
+                        <h3>No check-ins yet</h3>
+                        <p>Scan karke start karo.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Card - FIXED VERSION -->
+            <div class="smart-entry-card">
+                <h3 class="smart-entry-title">Member: Generate My QR</h3>
+                <p class="smart-entry-sub">Membership ID QR ke andar encoded hoga</p>
+
+                <!-- QR Box - Only QR code inside, NO BUTTONS -->
+                <div class="member-qr-box">
+                    <div id="myQrDiv"></div>
+                    <canvas id="myQrCanvas" style="display:none;"></canvas>
+                </div>
+
+                <!-- BUTTONS - Outside the QR box, clearly visible -->
+                <div class="member-qr-actions">
+                    <button class="btn-primary" type="button" onclick="generateMyQr()">
+                        <i class="fas fa-qrcode"></i> Generate My QR
+                    </button>
+                    <button class="btn-secondary" type="button" onclick="downloadMyQr()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+
+                <!-- Member Meta Info -->
+                <div class="member-qr-meta">
+                    <div class="meta-row">
+                        <span class="meta-label">Member ID:</span> 
+                        <span id="memberIdDisplay">-</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Status:</span> 
+                        <span id="memberQrStatus">Generate QR</span>
+                    </div>
+                </div>
+
+                <div id="memberQrMsg" class="smart-entry-msg" style="display:none;"></div>
+
+                <div class="smart-entry-tip">
+                    <small style="color:var(--gray);font-weight:800;">QR scan ke baad history update hogi.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+        <!-- ===== WORKOUT GENERATOR ===== -->
+        <section id="workout" class="workout-section">
+            <div class="container">
+                <h2 class="section-title">💪 Workout Generator</h2>
+                <p class="section-subtitle">Get a personalized workout plan in seconds</p>
+                
+                <div class="workout-container">
+                    <div class="workout-controls">
+                        <select id="workoutLevel" class="workout-select">
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate" selected>Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                        <select id="workoutFocus" class="workout-select">
+                            <option value="fullbody">Full Body</option>
+                            <option value="upper">Upper Body</option>
+                            <option value="lower">Lower Body</option>
+                            <option value="cardio">Cardio</option>
+                        </select>
+                        <select id="workoutDuration" class="workout-select">
+                            <option value="15">15 Minutes</option>
+                            <option value="30" selected>30 Minutes</option>
+                            <option value="45">45 Minutes</option>
+                            <option value="60">60 Minutes</option>
+                        </select>
+                        <button onclick="generateWorkout()" class="btn-primary">
+                            <i class="fas fa-dice"></i> Generate Workout
+                        </button>
+                    </div>
+                    
+                    <div id="workoutResult" class="workout-result" style="display:none;">
+                        <div class="workout-header">
+                            <h3 id="workoutTitle">🔥 Your Workout Plan</h3>
+                            <span id="workoutTime" class="workout-time"></span>
+                        </div>
+                        <ul id="workoutExercises" class="workout-exercises"></ul>
+                    <div class="workout-actions-inline">
+                        <button onclick="startWorkoutTimer()" class="btn-secondary">
+                            <i class="fas fa-play"></i> Start Workout Timer
+                        </button>
+                        <button onclick="saveWorkout()" class="btn-primary">
+                            <i class="fas fa-save"></i> Save Workout
+                        </button>
+                    </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== BMI CALCULATOR ===== -->
+        <section id="bmi" class="bmi-section">
+            <div class="container">
+                <h2 class="section-title">📊 BMI Calculator</h2>
+                <p class="section-subtitle">Check your Body Mass Index instantly</p>
+                
+                <div class="bmi-container">
+                    <div class="bmi-inputs">
+                        <div class="bmi-group">
+                            <label>Height (cm)</label>
+                            <input type="number" id="bmiHeight" placeholder="e.g., 175" value="175">
+                        </div>
+                        <div class="bmi-group">
+                            <label>Weight (kg)</label>
+                            <input type="number" id="bmiWeight" placeholder="e.g., 75" value="75">
+                        </div>
+                        <button onclick="calculateBMI()" class="btn-primary">
+                            <i class="fas fa-calculator"></i> Calculate BMI
+                        </button>
+                    </div>
+                    
+                    <div id="bmiResult" class="bmi-result" style="display:none;">
+                        <div class="bmi-score">
+                            <span id="bmiValue">22.5</span>
+                            <span class="bmi-status" id="bmiStatus">Normal</span>
+                        </div>
+                        <div class="bmi-scale">
+                            <div class="bmi-scale-bar">
+                                <div class="bmi-scale-fill" id="bmiScaleFill" style="width:50%;"></div>
+                            </div>
+                            <div class="bmi-scale-labels">
+                                <span>Underweight</span>
+                                <span>Normal</span>
+                                <span>Overweight</span>
+                                <span>Obese</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== COUNTDOWN TIMER ===== -->
+        <section id="timer" class="timer-section">
+            <div class="container">
+                <h2 class="section-title">⏱️ Workout Timer</h2>
+                <p class="section-subtitle">Set a timer for your workouts (Normal + Interval mode)</p>
+                
+                <div class="timer-container">
+                    <div class="timer-display">
+                        <span id="timerMinutes">05</span>:<span id="timerSeconds">00</span>
+                    </div>
+
+                    <div class="timer-controls" style="margin-bottom: 14px;">
+                        <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%;">
+                            <label style="display:flex;align-items:center;gap:10px;color:var(--light);font-weight:700;">
+                                <input type="checkbox" id="intervalMode" value="1" style="width:18px;height:18px;accent-color: var(--primary);" onchange="onToggleIntervalMode()">
+                                Interval Mode
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="timer-controls">
+                        <input type="number" id="timerInput" placeholder="Minutes" value="5" min="1" max="60" aria-label="Minutes for normal timer">
+                        <button onclick="startTimer()" class="btn-primary" id="timerStartBtn">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button onclick="pauseTimer()" class="btn-secondary" id="timerPauseBtn" style="display:none;">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button onclick="resetTimer()" class="btn-secondary" id="timerResetBtn">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+
+                    <!-- Interval settings (wired to interval timer engine in script.js) -->
+                    <div id="intervalSettings" style="margin-top:16px; display:none;">
+                        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+                            <div class="form-group" style="margin:0;min-width:160px;">
+                                <label style="color:var(--light);font-weight:700;font-size:0.9rem;display:block;margin-bottom:6px;">Warmup (sec)</label>
+                                <input type="number" id="intervalWarmupSec" min="1" value="60" style="width:100%;">
+                            </div>
+                            <div class="form-group" style="margin:0;min-width:160px;">
+                                <label style="color:var(--light);font-weight:700;font-size:0.9rem;display:block;margin-bottom:6px;">Work (sec)</label>
+                                <input type="number" id="intervalWorkSec" min="1" value="30" style="width:100%;">
+                            </div>
+                            <div class="form-group" style="margin:0;min-width:160px;">
+                                <label style="color:var(--light);font-weight:700;font-size:0.9rem;display:block;margin-bottom:6px;">Rest (sec)</label>
+                                <input type="number" id="intervalRestSec" min="0" value="15" style="width:100%;">
+                            </div>
+                            <div class="form-group" style="margin:0;min-width:160px;">
+                                <label style="color:var(--light);font-weight:700;font-size:0.9rem;display:block;margin-bottom:6px;">Rounds</label>
+                                <input type="number" id="intervalRounds" min="1" value="8" style="width:100%;">
+                            </div>
+                        </div>
+                        <div style="text-align:center;margin-top:12px;">
+                            <button class="btn-primary" onclick="startIntervalTimer()">
+                                <i class="fas fa-bolt"></i> Start Interval Workout
+                            </button>
+                            <button class="btn-secondary" onclick="pauseIntervalTimer()">
+                                <i class="fas fa-pause"></i> Pause
+                            </button>
+                            <button class="btn-secondary" onclick="resetIntervalTimer()">
+                                <i class="fas fa-undo"></i> Reset Interval
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="timerStatus" class="timer-status"></div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===== TESTIMONIALS ===== -->
+        <section id="testimonials" class="testimonials-section">
+            <div class="container">
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+                    <div>
+                        <h2 class="section-title" style="margin-bottom:8px;">What Our Members Say</h2>
+                        <p class="section-subtitle" style="margin-bottom:0;">Real stories from real people</p>
+                    </div>
+                    <button class="btn-primary" onclick="openReviewModal()" style="max-width:240px; white-space:nowrap;">
+                        <i class="fas fa-star"></i> <span style="font-size:0.95rem;">Leave a Review</span>
+                    </button>
+                </div>
+
+                <div class="testimonial-slider">
+                    <div class="testimonial-track" id="testimonialTrack">
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p>"Raj Gym transformed my life! The trainers are amazing and the environment is so motivating."</p>
+                            <div class="testimonial-author">
+                                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User">
+                                <div>
+                                    <h4>Rahul Sharma</h4>
+                                    <small>Member since 2023</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p>"Best gym in the city! State-of-the-art equipment and flexible timings make it perfect for working professionals."</p>
+                            <div class="testimonial-author">
+                                <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="User">
+                                <div>
+                                    <h4>Priya Patel</h4>
+                                    <small>Member since 2024</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p>"I've lost 15kg in 6 months! The personal trainers are experts and the community is incredibly supportive."</p>
+                            <div class="testimonial-author">
+                                <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="User">
+                                <div>
+                                    <h4>Amit Kumar</h4>
+                                    <small>Member since 2022</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-controls">
+                        <button onclick="slideTestimonial(-1)">❮</button>
+                        <button onclick="slideTestimonial(1)">❯</button>
+                    </div>
+                    <div class="testimonial-dots" id="testimonialDots"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FAQ SECTION ===== -->
+        <section id="faq" class="faq-section">
+            <div class="container">
+                <h2 class="section-title">❓ Frequently Asked Questions</h2>
+                <p class="section-subtitle">Everything you need to know about our gym</p>
+                
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What are the gym timings?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            We are open 5:00 AM to 11:00 PM, 7 days a week. We're open 365 days a year!
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What membership plans do you offer?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            We offer three plans: Basic (₹999/month), Premium (₹1999/month), and Gold (₹2999/month). Each plan comes with different benefits.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Do you have personal trainers?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes! We have 10+ certified personal trainers who can guide you through your fitness journey.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What facilities do you offer?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            We offer state-of-the-art equipment, locker rooms, shower facilities, yoga studio, cardio area, free weights zone, and dedicated personal training areas.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Can I cancel my membership?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, you can cancel your membership with a 30-day notice period. Please contact our front desk for the cancellation process.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Do you offer student discounts?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes! Students get a 15% discount on all membership plans. Just show your valid student ID at the time of registration.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MEMBERSHIP FORM ===== -->
+        <section id="membership" class="membership-section">
+            <div class="container">
+                <h2 class="section-title">Become a Member Today</h2>
+                <p class="section-subtitle">Fill in your details and start your fitness journey with us</p>
+                
+                <div class="form-container">
+                    <form id="membershipForm" novalidate>
+                        <div class="form-group">
+                            <label for="fullName">
+                                <i class="fas fa-user"></i> Full Name <span class="required">*</span>
+                            </label>
+                            <input type="text" id="fullName" name="fullName" 
+                                   placeholder="Enter your full name" 
+                                   required minlength="3" maxlength="50">
+                            <div class="error-message" id="nameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age">
+                                <i class="fas fa-calendar-alt"></i> Age <span class="required">*</span>
+                            </label>
+                            <input type="number" id="age" name="age" 
+                                   placeholder="Enter your age" 
+                                   required min="10" max="100">
+                            <div class="error-message" id="ageError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">
+                                <i class="fas fa-venus-mars"></i> Gender <span class="required">*</span>
+                            </label>
+                            <select id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="error-message" id="genderError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">
+                                <i class="fas fa-phone"></i> Phone Number <span class="required">*</span>
+                            </label>
+                            <input type="tel" id="phone" name="phone" 
+                                   placeholder="Enter 10-digit phone number" 
+                                   required pattern="[0-9]{10}" maxlength="10">
+                            <div class="error-message" id="phoneError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i> Email Address
+                            </label>
+                            <input type="email" id="email" name="email" 
+                                   placeholder="Enter your email address">
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="membershipPlan">
+                                <i class="fas fa-crown"></i> Membership Plan <span class="required">*</span>
+                            </label>
+                            <select id="membershipPlan" name="membershipPlan" required>
+                                <option value="">Select a plan</option>
+                                <option value="basic">Basic - ₹999/month</option>
+                                <option value="premium">Premium - ₹1999/month</option>
+                                <option value="gold">Gold - ₹2999/month</option>
+                            </select>
+                            <div class="error-message" id="planError"></div>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">I agree to the <a href="#" onclick="showTerms()">Terms & Conditions</a> <span class="required">*</span></label>
+                            <div class="error-message" id="termsError"></div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Submit Application
+                        </button>
+                    </form>
+
+                    <div id="successMessage" class="success-message" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Registration Successful!</h3>
+                        <p>Thank you for joining Raj Fitness Gym. Our team will contact you within 24 hours.</p>
+                        <button onclick="resetForm()" class="btn-primary">Register Another</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== NEWSLETTER ===== -->
+        <section class="newsletter-section">
+            <div class="container">
+                <div class="newsletter-content">
+                    <h3>📧 Subscribe to Our Newsletter</h3>
+                    <p>Get fitness tips, offers, and updates directly in your inbox</p>
+                    <form id="newsletterForm" class="newsletter-form">
+                        <input type="email" id="newsletterEmail" placeholder="Enter your email address" required>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-paper-plane"></i> Subscribe
+                        </button>
+                    </form>
+                    <div id="newsletterMessage" class="newsletter-message"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT SECTION ===== -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2 class="section-title">Contact Us</h2>
+                <p class="section-subtitle">Get in touch with us</p>
+                
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Address</h4>
+                                <p>123 Fitness Street, City, State - 123456</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Phone</h4>
+                                <p>+91 7256020750</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <p>info@rajgym.com</p>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER                                      -->
+    <!-- ============================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Raj Fitness Gym</h4>
+                    <p>Transforming lives through fitness since 2015</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#plans">Plans</a></li>
+                        <li><a href="#workout">Workout</a></li>
+                        <li><a href="#smartEntry">Smart Entry (QR)</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        
+
+
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Working Hours</h4>
+                    <p>Mon-Sun: 5:00 AM - 11:00 PM</p>
+                    <p>Open 365 days</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Raj Fitness Gym. All rights reserved. | Made with <i class="fas fa-heart"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    
+
+    <!-- Membership Modal -->
+    <div id="membershipModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeMembershipModal()">&times;</span>
+            <h2>Join Raj Fitness Gym</h2>
+            <p>Fill in your details below and start your transformation journey today!</p>
+            <button onclick="closeMembershipModal(); scrollToSection('membership')" class="btn-primary">
+                Go to Registration Form
+            </button>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Leave a Review Modal -->
+    <div id="reviewModal" class="modal" aria-hidden="true">
+        <div class="modal-content" style="max-width:520px;">
+            <span class="close" onclick="closeReviewModal()" style="position:absolute;top:15px;right:20px;font-size:2rem;cursor:pointer;">&times;</span>
+            <h2 style="margin-bottom:8px;">Leave a Review</h2>
+            <p style="margin-bottom:18px;">Your feedback helps others choose Raj Gym.</p>
+
+            <form onsubmit="submitReview(event)" id="reviewForm" novalidate>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="color:var(--light);font-weight:700;display:block;margin-bottom:6px;">Your Name</label>
+                    <input type="text" id="reviewName" placeholder="e.g., Rahul Sharma" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="color:var(--light);font-weight:700;display:block;margin-bottom:6px;">Rating</label>
+                    <select id="reviewRating" required>
+                        <option value="">Select rating</option>
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="3">3 - Good</option>
+                        <option value="2">2 - Average</option>
+                        <option value="1">1 - Poor</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="color:var(--light);font-weight:700;display:block;margin-bottom:6px;">Review</label>
+                    <textarea id="reviewText" placeholder="Write your experience..." required style="width:100%;min-height:110px;padding:12px 16px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--light);font-size:1rem;font-family:'Merriweather', serif;" maxlength="400"></textarea>
+                    <small id="reviewCharHint" style="display:block;color:var(--gray);margin-top:6px;">0/400</small>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width:100%;">
+                    <i class="fas fa-star"></i> Submit Review
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Floating Chatbot -->
+    <div id="chatbot">
+
+        <div class="chatbot-toggle" onclick="toggleChatbot()">
+            <i class="fas fa-comment-dots"></i>
+            <span class="chat-badge">1</span>
+        </div>
+        
+        <div class="chatbot-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <img src="images/logo.jpeg" alt="Raj Gym" style="width:35px;height:35px;border-radius:50%;">
+                    <div>
+                        <h4>Raj Fitness AI</h4>
+                        <small>Online • Usually replies instantly</small>
+                    </div>
+                </div>
+                <button onclick="toggleChatbot()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;">&times;</button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot">
+                    <div class="message-bubble">
+                        👋 Welcome to Raj Fitness Gym!<br>
+                        How can I help you today?
+                    </div>
+                    <span class="message-time">Just now</span>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="quick-replies" id="quickReplies">
+                    <button onclick="sendQuickReply('Membership plans')">📋 Plans</button>
+                    <button onclick="sendQuickReply('Gym timings')">🕐 Timings</button>
+                    <button onclick="sendQuickReply('Trainer booking')">💪 Trainer</button>
+                    <button onclick="sendQuickReply('Contact')">📞 Contact</button>
+                </div>
+                <div class="chat-input-wrapper">
+                    <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Member Counter -->
+    <div class="live-counter">
+        <div class="counter-content">
+            <i class="fas fa-users" style="color:var(--primary);font-size:2rem;"></i>
+            <div>
+                <div class="counter-number" id="memberCount">1,247</div>
+                <div class="counter-label">Active Members Today</div>
+            </div>
+            <div class="counter-pulse"></div>
+        </div>
+    </div>
+
+    
+    <script src="script.js"></script>
+    <script src="smartEntry.js"></script>
+    <script>
+        // Backend base URL for integration (used by script.js)
+        window.API_BASE_URL = (window.API_BASE_URL || 'http://127.0.0.1:4000');
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+# ============================================
+# Raj Fitness Gym - .gitignore
+# ============================================
+
+# === Node.js / Dependencies ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Environment Variables ===
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# === OS Generated Files ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# === IDE / Editor Files ===
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-snippets
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# === Logs ===
+logs/
+*.log
+*.txt.log
+
+# === Temp / Cache ===
+tmp/
+temp/
+*.tmp
+*_tmp.*
+_tmp.*
+__pycache__/
+*.pyc
+.cache/
+
+# === Build / Dist ===
+dist/
+build/
+out/
+
+# === Coverage / Test ===
+coverage/
+.nyc_output/
+
+# === Firebase Service Account (Sensitive) ===
+raj-gym-backend/firebaseAdminConfig.json
+raj-gym-backend/*-service-account.json
+raj-gym-backend/*-firebase-key.json
+
+# === Package Lock (optional - keep for reproducible builds) ===
+# Uncomment below if you want to ignore lock files
+# package-lock.json
+# raj-gym-backend/package-lock.json
+
+# === Misc ===
+*.bak
+*.backup
+*.orig
+.cache/
+.eslintcache
+.history/
+
