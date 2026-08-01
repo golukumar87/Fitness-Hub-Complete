@@ -98,3 +98,16 @@ Then open:
 
 (If you only want frontend, skip backend and just run npx serve -l 5500.)
 
+
+
+
+///run command/// only frontend
+cd "c:/Users/Ravish Kumar/Desktop/codeing/RAJ Project/GYM WEBSITE"
+npx serve -l 5500
+
+
+//frontend backend mongodb all Run
+cd "c:/Users/Ravish Kumar/Desktop/codeing/RAJ Project/GYM WEBSITE/raj-gym-backend"
+npm install
+
+npm start

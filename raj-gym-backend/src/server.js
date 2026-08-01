@@ -22,12 +22,11 @@ app.use(cors({
       'http://localhost:5501',
     ]);
 
-    if (!origin) return cb(null, true); // non-browser requests
+    if (!origin) return cb(null, true); 
 
     const fromEnv = process.env.CORS_ORIGIN;
     if (fromEnv && origin === fromEnv) return cb(null, true);
 
-    // Allow any Vercel preview/production domain (https://<project>.vercel.app)
     if (origin.endsWith('.vercel.app')) return cb(null, true);
 
     return cb(null, allowed.has(origin));
@@ -45,14 +44,10 @@ app.use('/api/me', meRouter);
 app.use('/api/me', adminRouter);
 
 
-// Serve frontend (GYM WEBSITE) from this backend.
-// So GET / loads index.html and static assets (style.css, script.js, images, etc.) work.
-// __dirname = .../raj-gym-backend/src
-// Frontend folder: .../RAJ Project/GYM WEBSITE
+//
 const frontendStaticDir = path.join(__dirname, '..', '..');
 
-// SPA fallback: any unknown route returns index.html
-// Use a regex-style catch-all to avoid path-to-regexp “Missing parameter name” errors.
+
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(frontendStaticDir, 'index.html'));
 });
