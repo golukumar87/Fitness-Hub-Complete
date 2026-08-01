@@ -1,0 +1,33 @@
+# ============================================
+# Raj Fitness Gym - Vercel ignore rules
+# ============================================
+# The frontend is deployed to Vercel as a static site.
+# The backend (Express/MongoDB/Socket.IO) is deployed separately (Render/Railway),
+# so it must NOT be uploaded to Vercel.
+
+# Backend
+raj-gym-backend/
+
+# Node lockfile at root (belongs to backend; not used by the static site)
+package-lock.json
+
+# Local env files (secrets must never be uploaded)
+.env
+.env.*
+*.env
+
+# Documentation / misc
+DEPLOY_BACKEND.md
+LOCAL_DEV.md
+run_commands.txt
+*.md
+_tmp.*
+tmp/
+temp/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

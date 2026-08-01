@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  // Allow common dev origins; prevents “Failed to fetch” due to CORS mismatch.
+
   origin: (origin, cb) => {
     const allowed = new Set([
       'http://127.0.0.1:5500',
@@ -26,6 +26,9 @@ app.use(cors({
 
     const fromEnv = process.env.CORS_ORIGIN;
     if (fromEnv && origin === fromEnv) return cb(null, true);
+
+    // Allow any Vercel preview/production domain (https://<project>.vercel.app)
+    if (origin.endsWith('.vercel.app')) return cb(null, true);
 
     return cb(null, allowed.has(origin));
   },

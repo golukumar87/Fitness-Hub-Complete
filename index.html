@@ -39,6 +39,17 @@
     <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-auth-compat.js"></script>
 
+    <!--
+      Backend base URL for integration (used by script.js).
+      NOTE: This MUST load BEFORE script.js.
+      Locally it defaults to http://127.0.0.1:4000.
+      For production, replace with your hosted backend URL, e.g.:
+      window.API_BASE_URL = 'https://raj-gym-backend.onrender.com';
+    -->
+    <script>
+      window.API_BASE_URL = (window.API_BASE_URL || 'http://127.0.0.1:4000');
+    </script>
+
 </head>
 <body>
 
@@ -1513,9 +1524,5 @@
     
     <script src="script.js"></script>
     <script src="smartEntry.js"></script>
-    <script>
-        // Backend base URL for integration (used by script.js)
-        window.API_BASE_URL = (window.API_BASE_URL || 'http://127.0.0.1:4000');
-    </script>
 </body>
 </html>
